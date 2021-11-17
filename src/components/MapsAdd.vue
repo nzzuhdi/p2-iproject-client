@@ -77,34 +77,15 @@ export default {
       attribution:
         '&copy; <a target="_blank" href="http://osm.org/copyright">OpenStreetMap</a> contributors',
       zoom: 18,
-      center: [-6.1717952, 106.7614208],
-      markerLatLng: [-6.1717952, 106.7614208],
-      events: [
-        {
-          name: "Futsal Happy",
-          address: "Tebet",
-          markerLatLng: [0, 0],
-        },
-        {
-          name: "Futsal Happy",
-          address: "Pancoran",
-          markerLatLng: [0, 0],
-        },
-        {
-          name: "Futsal Happy",
-          address: "Ciputat",
-          markerLatLng: [0, 0],
-        },
-      ],
       dragging: false,
     };
   },
   watch: {
     position: {
       deep: true,
-      async handler(value) {
+      async handler() {
         this.address = await this.getAddress();
-        this.$emit("input", { position: value, address: this.address });
+        // this.$emit("input", { position: value, address: this.address });
       },
     },
   },
@@ -177,6 +158,7 @@ export default {
       const loc = value.location;
       this.position = { lat: loc.y, lng: loc.x };
     },
+    
   },
 };
 </script>
