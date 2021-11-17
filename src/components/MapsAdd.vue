@@ -1,124 +1,128 @@
 <template>
-  <div class="container">
-    <h1>Create Your Sports Event Here!</h1>
-       <form>
-    <div class="row">
-      <div class="col-6">
-  <fieldset>
-    <legend>Legend</legend>
-  
-    <div class="form-group">
-      <label for="sporstEventName" class="form-label mt-4">Sports Event</label>
-      <input type="email" class="form-control" id="sporstEventName" aria-describedby="sporstEventName" placeholder="Enter the name event">
-      <small id="emailHelp" class="form-text text-muted">make sure people want to join you</small>
-    </div>
-    <div class="form-group">
-      <label for="selectSports" class="form-label mt-4">Sports Category</label>
-      <select class="form-select" id="selectSports">
-        <option selected disabled>--Chose--</option>
-        <option>Futsal</option>
-        <option>Soccer</option>
-        <option>Volley</option>
-        <option>BasketBall</option>
-        <option>Badminton</option>
-      </select>
-    </div>
-    <div class="form-group">
-      <label for="eventAdress" class="form-label mt-2">Address</label>
-      <input type="text" class="form-control" id="eventAdress" placeholder="Address">
-    </div>
-    <div class="form-group">
-      <label for="formFile" class="form-label mt-4">Your Logo's Event</label>
-      <input class="form-control" type="file" id="formFile">
-    </div>
-  
-    <button type="submit" class="btn btn-primary">Submit</button>
-  </fieldset>
-      </div>
-      <div class="col-6">
-        <div class="form-group">
-          <l-map
-            ref="map"
-            style="height: 500px"
-            :zoom="zoom"
-            :center="[
-              userLocation.lat || defaultLocation.lat,
-              userLocation.lng || defaultLocation.lng
-            ]"
-          >
-            <l-tile-layer :url="url" :attribution="attribution"></l-tile-layer>
-            <l-marker
-              v-for="event in events"
-              :key="event.name"
-              :lat-lng="event.markerLatLng"
-            >
-              <l-popup style="width:200%; p">
-                <h2>{{ event.name }}</h2>
-                <h3>{{ event.address }}</h3>
-                <button>Join</button></l-popup
-              >
-              <l-tooltip :content="tooltipContent" :options="{ permanent: true }" />
-            </l-marker>
-          </l-map>
-        </div>
-      </div>
-    </div>
-      </form>
-  </div>
-
+  <l-map
+    ref="map"
+    @dblclick="onMapClick"
+    style="height: 500px"
+    :zoom="zoom"
+    :center="[
+      position.lat || userLocation.lat || defaultLocation.lat,
+      position.lng || userLocation.lng || defaultLocation.lng,
+    ]"
+  >
+    <l-tile-layer :url="url" :attribution="attribution"></l-tile-layer>
+    <l-geosearch :options="geoSearchOptions"></l-geosearch>
+    <l-marker
+      v-if="position.lat && position.lng"
+      visible
+      draggable
+      :icon="icon"
+      :lat-lng.sync="position"
+      @dragstart="dragging = true"
+      @dragend="dragging = false"
+    >
+      <l-tooltip
+        style="width: 20px; height: 20px"
+        :content="tooltipContent"
+        :options="{ permanent: true }"
+      />
+    </l-marker>
+  </l-map>
 </template>
 
-<script>
-import { LMap, LTileLayer, LMarker, LPopup , LTooltip } from "vue2-leaflet";
 
+<script>
+import { LMap, LTileLayer, LMarker, LTooltip } from "vue2-leaflet";
+import { icon } from "leaflet";
+import { OpenStreetMapProvider } from "leaflet-geosearch";
+import LGeosearch from "vue2-leaflet-geosearch";
 export default {
   name: "MapsAdd",
   components: {
     LMap,
     LTileLayer,
     LMarker,
-    LPopup,
     LTooltip,
+    LGeosearch,
   },
-   props: {
+  props: {
+    value: {
+      type: Object,
+      required: true,
+    },
     defaultLocation: {
       type: Object,
       default: () => ({
         lat: 8.9806,
-        lng: 38.7578
-      })
-    }
+        lng: 38.7578,
+      }),
+    },
   },
   data() {
     return {
+      loading: false,
+      geoSearchOptions: {
+        provider: new OpenStreetMapProvider(),
+        showMarker: false,
+        autoClose: true,
+      },
+      icon: icon({
+        iconRetinaUrl: require("leaflet/dist/images/marker-icon-2x.png"),
+        iconUrl: require("leaflet/dist/images/marker-icon.png"),
+        shadowUrl: require("leaflet/dist/images/marker-shadow.png"),
+      }),
       userLocation: {},
+      position: {},
+      address: "",
       url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
       attribution:
         '&copy; <a target="_blank" href="http://osm.org/copyright">OpenStreetMap</a> contributors',
       zoom: 18,
-      center: [],
+      center: [-6.1717952, 106.7614208],
       markerLatLng: [-6.1717952, 106.7614208],
       events: [
         {
           name: "Futsal Happy",
           address: "Tebet",
-          markerLatLng: [-6.1717952, 106.7614208],
+          markerLatLng: [0, 0],
         },
         {
           name: "Futsal Happy",
           address: "Pancoran",
-          markerLatLng: [-6.2717952, 106.7614208],
+          markerLatLng: [0, 0],
         },
         {
           name: "Futsal Happy",
           address: "Ciputat",
-          markerLatLng: [-6.3717952, 106.7614208],
+          markerLatLng: [0, 0],
         },
       ],
+      dragging: false,
     };
   },
-  created() {
+  watch: {
+    position: {
+      deep: true,
+      async handler(value) {
+        this.address = await this.getAddress();
+        this.$emit("input", { position: value, address: this.address });
+      },
+    },
+  },
+  computed: {
+    tooltipContent() {
+      if (this.dragging) return "...";
+      if (this.loading) return "Loading...";
+      return `<strong>${this.address.replace(
+        ",",
+        "<br/>"
+      )}</strong> <hr/><strong>lat:</strong> ${
+        this.position.lat
+      }<br/> <strong>lng:</strong> ${this.position.lng}`;
+    },
+  },
+  mounted() {
     this.getUserPosition();
+    this.$refs.map.mapObject.on("geosearch/showlocation", this.onSearch);
   },
   methods: {
     async getUserPosition() {
@@ -133,15 +137,50 @@ export default {
           };
           console.log(this.userLocation.lat);
           console.log(this.userLocation.lng);
-          console.log(this.center, 'tes');
+          console.log(this.center, "tes");
 
-          this.center = [this.userLocation.lat, this.userLocation.lng]
+          this.center = [this.userLocation.lat, this.userLocation.lng];
+          this.events[0].markerLatLng = this.center;
+
           console.log(this.userLocation);
-          console.log(this.center, 'tes 1');
-
+          console.log(this.center, "tes 1");
         });
       }
+    },
+    async getAddress() {
+      this.loading = true;
+      let address = "Unresolved address";
+      try {
+        const { lat, lng } = this.position;
+        const result = await fetch(
+          `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}`
+        );
+        if (result.status === 200) {
+          const body = await result.json();
+          address = body.display_name;
+         this.$store.commit("SET_ADDRESS",address)
+
+        }
+      } catch (e) {
+        console.error("Reverse Geocode Error->", e);
+      }
+      this.loading = false;
+      return address;
+    },
+    onMapClick(value) {
+      // place the marker on the clicked spot
+      console.log(value);
+      this.position = value.latlng;
+      console.log(this.position, "mapclick");
+    },
+    onSearch(value) {
+      const loc = value.location;
+      this.position = { lat: loc.y, lng: loc.x };
     },
   },
 };
 </script>
+
+
+<style>
+</style>
