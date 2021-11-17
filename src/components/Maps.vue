@@ -73,7 +73,8 @@ export default {
       ],
     };
   },
-  created() {
+  beforeMount() {
+      console.log('masuk beforemount');
     this.getUserPosition();
   },
   methods: {
