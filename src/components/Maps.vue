@@ -12,14 +12,17 @@
     <l-marker
       v-for="event in events"
       :key="event.name"
-      :lat-lng="event.markerLatLng"
+      :lat-lng="[Number(event.lattitude), Number(event.longitude)]"
     >
       <l-popup style="width:200%; p">
         <h2>{{ event.name }}</h2>
-        <h3>{{ event.address }}</h3>
+        <img :src="event.imageUrl" alt="">
+        <p>Alamat: {{ event.address }}</p>
+        <p>Tanggal: {{ event.date }}</p>
+        <p>Waktu: {{ event.time }}</p>
         <button>Join</button></l-popup
       >
-       <l-tooltip :content="tooltipContent" :options="{ permanent: true }" />
+       <l-tooltip />
     </l-marker>
   </l-map>
 </template>
@@ -55,27 +58,22 @@ export default {
       center: [],
       markerLatLng: [-6.1717952, 106.7614208],
       events: [
-        {
-          name: "Futsal Happy",
-          address: "Tebet",
-          markerLatLng: [-6.2737952, 106.7614208],
-        },
-        {
-          name: "Futsal Happy",
-          address: "Pancoran",
-          markerLatLng: [-6.2727952, 106.7614208],
-        },
-        {
-          name: "Futsal Happy",
-          address: "Ciputat",
-          markerLatLng: [-6.2717952, 106.7614208],
-        },
+       
       ],
     };
   },
-  beforeMount() {
+  created() {
       console.log('masuk beforemount');
     this.getUserPosition();
+    this.$store.dispatch("axiosFetchEvent")
+     .then(({ data }) => {
+        console.log(data, 'ini data');
+        this.events = data
+        console.log(this.events, 'ini events');
+      })
+      .catch((err) => {
+        console.log(err, 'masuk eror fetch');
+      });
   },
   methods: {
     async getUserPosition() {
@@ -88,17 +86,10 @@ export default {
             lat: pos.coords.latitude,
             lng: pos.coords.longitude,
           };
-          console.log(this.userLocation.lat);
-          console.log(this.userLocation.lng);
-          console.log(this.center, 'tes');
-
           this.center = [this.userLocation.lat, this.userLocation.lng]
-          console.log(this.userLocation);
-          console.log(this.center, 'tes 1');
-
         });
       }
     },
-  },
+  }
 };
 </script>

@@ -25,6 +25,13 @@ export default new Vuex.Store({
         url: `cust/login`,
         data: payload
       })
+    },
+    axiosFetchEvent(context){
+      console.log(context);
+      return axios({
+        method: "GET",
+        url: `events`,
+      })
     }
   },
   modules: {
