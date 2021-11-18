@@ -17,6 +17,7 @@
                 id="sporstEventName"
                 aria-describedby="sporstEventName"
                 placeholder="Enter the name event"
+                v-model="eventName"
               />
               <small id="emailHelp" class="form-text text-muted"
                 >make sure people want to join you</small
@@ -26,7 +27,7 @@
               <label for="selectSports" class="form-label mt-4"
                 >Sports Category</label
               >
-              <select class="form-select" id="selectSports">
+              <select class="form-select" id="selectSports" v-model="category">
                 <option selected disabled>--Chose--</option>
                 <option>Futsal</option>
                 <option>Soccer</option>
@@ -42,14 +43,36 @@
                 class="form-control"
                 id="eventAdress"
                 placeholder="Address"
-                v-model="this.$store.state.addressAdd"
+                v-model="getAddress"
+              />
+            </div>
+            <div class="form-group">
+              <label for="eventTime" class="form-label mt-2">Date&Time</label>
+              <input
+                type="date"
+                class="form-control"
+                id="eventAdress"
+                placeholder="Address"
+                v-model="date"
+              />
+              <br />
+              <input
+                type="time"
+                class="form-control"
+                id="eventAdress"
+                placeholder="Address"
+                v-model="time"
               />
             </div>
             <div class="form-group">
               <label for="formFile" class="form-label mt-4"
                 >Your Logo's Event</label
               >
-              <input class="form-control" type="file" id="formFile" />
+              <input id="news-image"
+              type="file"
+              class="form-control"
+              name="imgUrl"
+              ref="file" @change="uploadFile"/>
             </div>
 
             <button type="submit" class="btn btn-primary">Submit</button>
@@ -57,7 +80,7 @@
         </div>
         <div class="col-6">
           <div class="form-group">
-         <MapsAdd/>
+            <MapsAdd />
           </div>
         </div>
       </div>
@@ -70,39 +93,35 @@ import MapsAdd from "../components/MapsAdd.vue";
 export default {
   name: "FormAdd",
   components: {
-   MapsAdd
+    MapsAdd,
   },
   data() {
     return {
+      eventName: "",
+      date: "",
+      time: "",
       userLocation: {},
       position: {},
-      address: "",
-      events: [
-        {
-          name: "Futsal Happy",
-          address: "Tebet",
-          markerLatLng: [0, 0],
-        },
-        {
-          name: "Futsal Happy",
-          address: "Pancoran",
-          markerLatLng: [0, 0],
-        },
-        {
-          name: "Futsal Happy",
-          address: "Ciputat",
-          markerLatLng: [0, 0],
-        },
-      ],
+      imgUrl: "",
+      category: ""
     };
   },
   watch: {
+
   },
   computed: {
+    getAddress() {
+      return this.$store.state.addressAdd;
+    },
   },
-  created() {
-  },
+  created() {},
   methods: {
+    uploadFile() {
+      console.log(this.imgUrl,'before');
+
+      this.imgUrl = this.$refs.file.files[0];
+      console.log(this.imgUrl,'after');
+    },
   },
 };
 </script>

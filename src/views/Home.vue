@@ -14,9 +14,6 @@
        <button @click="toAddEvent" type="button" class="btn btn-secondary">Or Create The New One!</button>
         </div>
     </div>
-
-
-
   </div>
 </template>
 
@@ -33,5 +30,8 @@ export default {
       this.$router.push('/addevent').catch(()=>{});
     }
   },
+  created(){
+    
+  }
 }
 </script>
