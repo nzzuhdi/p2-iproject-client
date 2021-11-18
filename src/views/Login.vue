@@ -109,10 +109,12 @@ export default {
     async googleLogin() {
       try {
         const googleUser = await this.$gAuth.signIn();
+        console.log(googleUser,' gogleUser');
         let { id_token } = googleUser.getAuthResponse();
+        console.log(id_token);
        axios({
           method: "POST",
-          url: `cust/google-signin`,
+          url: `/google-signin`,
           data: {
             id_token,
           },
@@ -120,7 +122,7 @@ export default {
           .then(({data} ) => {
             localStorage.setItem("access_token", data.access_token);
             this.$store.commit("SET_ISLOGIN", true);
-          this.$router.push({ name: "Home" });
+          this.$router.push('/');
           })
           .catch((err) => {
             console.log(err.response.data);

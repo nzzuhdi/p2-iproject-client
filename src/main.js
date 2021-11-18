@@ -6,6 +6,14 @@ import { LMap, LTileLayer, LMarker } from 'vue2-leaflet';
 import { Icon } from 'leaflet';
 import "leaflet/dist/leaflet.css";
 import "leaflet-geosearch/dist/geosearch.css";
+import GAuth from 'vue-google-oauth2'
+const gauthOption = {
+  clientId: '12110070148-m6tb32lq8a34o34vckfephu3j7mfbifd.apps.googleusercontent.com',
+  scope: 'profile email',
+  prompt: 'select_account',
+  fetch_basic_profile: true
+}
+Vue.use(GAuth, gauthOption)
 
 delete Icon.Default.prototype._getIconUrl;
 Icon.Default.mergeOptions({
