@@ -56,6 +56,17 @@ export default new Vuex.Store({
         },
         data: formData
       })
+    },
+    axiosPostEvents(context, payload){
+      const EventId = payload
+      
+      return axios({
+        method: "POST",
+        url: `events/players/${EventId}`,
+        headers:{
+          access_token : localStorage.access_token
+        }
+      })
     }
   },
   modules: {

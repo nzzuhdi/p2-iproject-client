@@ -143,6 +143,8 @@ export default {
      this.$store.dispatch("axiosPostEvents", payload) 
      .then(({data} ) => {
          console.log(data, 'ini data');
+     this.$store.commit("SET_ADDRESS","");
+
           this.$router.push('/');
           })
           .catch((err) => {

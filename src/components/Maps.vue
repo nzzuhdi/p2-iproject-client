@@ -19,10 +19,13 @@
       <l-popup style="width:200%; p">
         <h2>{{ event.name }}</h2>
         <img :src="event.imageUrl" alt="">
+        <div class="col-6">
         <p>Alamat: {{ event.address }}</p>
         <p>Tanggal: {{ event.date }}</p>
         <p>Waktu: {{ event.time }}</p>
-        <button>Join</button></l-popup
+        <button @click="postPlayers(event.id)" class="btn-primary">Join</button>
+        </div>
+        </l-popup
       >
        <l-tooltip />
     </l-marker>
@@ -106,6 +109,17 @@ export default {
      onSearch(value) {
       const loc = value.location;
       this.position = { lat: loc.y, lng: loc.x };
+    },
+    postPlayers(eventId) {
+      console.log(eventId);
+      this.$store.dispatch("axiosPostEvents",eventId)
+      .then(({ data }) => {
+        console.log(data, 'ini data');
+      })
+      .catch((err) => {
+        console.log(err, 'masuk eror fetch');
+      });
+
     }
   }
 };
