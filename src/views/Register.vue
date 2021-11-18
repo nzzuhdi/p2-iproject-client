@@ -25,8 +25,24 @@
               >We'll never share your email with anyone else.</small
             >
           </div>
+           <div class="form-group">
+            <label for="exampleInputEmail1" class="form-label mt-1"
+              >Username</label
+            >
+            <input
+            v-model="username"
+              type="email"
+              class="form-control"
+              id="exampleInputEmail1"
+              aria-describedby="emailHelp"
+              placeholder="Enter username"
+            />
+            <small id="emailHelp" class="form-text text-muted"
+              >So people can call you.</small
+            >
+          </div>
           <div class="form-group">
-            <label for="exampleInputPassword1" class="form-label mt-4"
+            <label for="exampleInputPassword1" class="form-label mt-1"
               >Password</label
             >
             <input
@@ -59,13 +75,15 @@ export default {
     return {
       emailInput: "",
       passwordInput: "",
+      username: ""
     };
   },
   methods:{
     getRegister(){
       const payload = {
         email:this.emailInput,
-        password:this.passwordInput
+        password:this.passwordInput,
+        username: this.username
       }
        this.$store
         .dispatch("axiosRegister", payload)
@@ -76,7 +94,9 @@ export default {
         .catch((err) => {
           console.log(err.response.data);
         });
-      (this.emailInput = ""), (this.passwordInput = "");
+      (this.emailInput = ""), 
+      (this.passwordInput = "");
+      (this.username = "");
 
     }
   }

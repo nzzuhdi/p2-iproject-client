@@ -17,13 +17,15 @@
       :lat-lng="[Number(event.lattitude), Number(event.longitude)]"
     >
       <l-popup style="width:200%; p">
-        <h2>{{ event.name }}</h2>
-        <img :src="event.imageUrl" alt="">
         <div class="col-6">
+        <h2>{{ event.name }}</h2>
+        <img :src="event.imageUrl" alt="" style="max-width:100%">
         <p>Alamat: {{ event.address }}</p>
         <p>Tanggal: {{ event.date }}</p>
         <p>Waktu: {{ event.time }}</p>
-        <button @click="postPlayers(event.id)" class="btn-primary">Join</button>
+        <button v-if="isLogin" @click="postPlayers(event.id)" class="btn-success">Join</button>
+        <button v-else  @click="toLogin" class="btn-primary"> Login for Join</button>
+
         </div>
         </l-popup
       >
@@ -36,6 +38,8 @@
 import { LMap, LTileLayer, LMarker, LPopup , LTooltip } from "vue2-leaflet";
 import { OpenStreetMapProvider } from "leaflet-geosearch";
 import LGeosearch from "vue2-leaflet-geosearch";
+import Swal from "sweetalert2";
+
 export default {
   name: "Maps",
   components: {
@@ -74,6 +78,11 @@ export default {
 
     };
   },
+  computed:{
+     isLogin(){
+      return this.$store.state.isLogin
+    }
+  },
   mounted() {
     this.getUserPosition();
     this.$refs.map.mapObject.on("geosearch/showlocation", this.onSearch);
@@ -110,13 +119,26 @@ export default {
       const loc = value.location;
       this.position = { lat: loc.y, lng: loc.x };
     },
+    toLogin() {
+      this.$router.push('/login')
+},
     postPlayers(eventId) {
       console.log(eventId);
-      this.$store.dispatch("axiosPostEvents",eventId)
+      this.$store.dispatch("axiosPostPlayers",eventId)
       .then(({ data }) => {
-        console.log(data, 'ini data');
+        Swal.fire({
+            icon: "success",
+            title: `${data.message}`,
+            showConfirmButton: true,
+          });
       })
       .catch((err) => {
+        Swal.fire({
+            icon: "error",
+            title: err.response.data.message,
+            showConfirmButton: false,
+            timer: 1500,
+          });
         console.log(err, 'masuk eror fetch');
       });
 

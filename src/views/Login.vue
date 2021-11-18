@@ -7,11 +7,7 @@
     <div class="card border-primary md-6" style="max-width: 30rem">
       <form>
         <fieldset>
-          <legend
-            style="justify-content: center; "
-          >
-            Login Here
-          </legend>
+          <legend style="justify-content: center">Login Here</legend>
           <div class="form-group">
             <label for="exampleInputEmail1" class="form-label mt-4"
               >Email address</label
@@ -77,6 +73,7 @@
 
 <script>
 import axios from "../apis/axios";
+import Swal from "sweetalert2";
 export default {
   name: "Login",
   data() {
@@ -94,12 +91,24 @@ export default {
       this.$store
         .dispatch("axiosLogin", payload)
         .then(({ data }) => {
+          Swal.fire({
+            icon: "success",
+            title: `Welcome `,
+            showConfirmButton: false,
+            timer: 1500,
+          });
           localStorage.setItem("access_token", data.access_token);
           this.$store.commit("SET_ISLOGIN", true);
           this.$router.push({ name: "Home" });
         })
         .catch((err) => {
-          console.log(err.response.data);
+           Swal.fire({
+            icon: "error",
+            title: err.response.data.message,
+            showConfirmButton: false,
+            timer: 1500,
+          });
+          console.log(err.response.data.message);
         });
       (this.emailInput = ""), (this.passwordInput = "");
     },
@@ -109,29 +118,41 @@ export default {
     async googleLogin() {
       try {
         const googleUser = await this.$gAuth.signIn();
-        console.log(googleUser,' gogleUser');
+        console.log(googleUser, " gogleUser");
         let { id_token } = googleUser.getAuthResponse();
         console.log(id_token);
-       axios({
+        axios({
           method: "POST",
           url: `/google-signin`,
           data: {
             id_token,
           },
         })
-          .then(({data} ) => {
+          .then(({ data }) => {
+            Swal.fire({
+            icon: "success",
+            title: `Welcome `,
+            showConfirmButton: false,
+            timer: 1500,
+          });
             localStorage.setItem("access_token", data.access_token);
             this.$store.commit("SET_ISLOGIN", true);
-          this.$router.push('/');
+            this.$router.push("/");
           })
           .catch((err) => {
             console.log(err.response.data);
           });
       } catch (error) {
-        console.log(error.response.data, 'eror sini kah?');
+        Swal.fire({
+            icon: "error",
+            title: err.response.data.message,
+            showConfirmButton: false,
+            timer: 1500,
+          });
+        console.log(error.response.data, "eror sini kah?");
       }
-    }
     },
+  },
 };
 </script>
 

@@ -68,11 +68,14 @@
               <label for="formFile" class="form-label mt-4"
                 >Your Logo's Event</label
               >
-              <input id="news-image"
-              type="file"
-              class="form-control"
-              name="imgUrl"
-              ref="file" @change="uploadFile"/>
+              <input
+                id="news-image"
+                type="file"
+                class="form-control"
+                name="imgUrl"
+                ref="file"
+                @change="uploadFile"
+              />
             </div>
 
             <button type="submit" class="btn btn-primary">Submit</button>
@@ -90,6 +93,8 @@
 
 <script>
 import MapsAdd from "../components/MapsAdd.vue";
+import Swal from "sweetalert2";
+
 export default {
   name: "FormAdd",
   components: {
@@ -104,15 +109,13 @@ export default {
       position: {},
       imageUrl: "",
       category: "",
-      address: ""
+      address: "",
     };
   },
-  watch: {
-
-  },
+  watch: {},
   computed: {
     getAddress() {
-      this.address = this.$store.state.addressAdd
+      this.address = this.$store.state.addressAdd;
       return this.$store.state.addressAdd;
     },
     getLatlng() {
@@ -122,12 +125,12 @@ export default {
   created() {},
   methods: {
     uploadFile() {
-      console.log(this.imgUrl,'before');
+      console.log(this.imgUrl, "before");
 
       this.imageUrl = this.$refs.file.files[0];
-      console.log(this.imageUrl,'after');
+      console.log(this.imageUrl, "after");
     },
-    postEvents(){
+    postEvents() {
       // console.log(this.getLatlng, 'latlg');
       const payload = {
         name: this.eventName,
@@ -137,20 +140,32 @@ export default {
         lattitude: this.getLatlng.lat,
         longitude: this.getLatlng.lng,
         date: this.date,
-        time: this.time
-      }
-      console.log(payload,'ini payload');
-     this.$store.dispatch("axiosPostEvents", payload) 
-     .then(({data} ) => {
-         console.log(data, 'ini data');
-     this.$store.commit("SET_ADDRESS","");
-
-          this.$router.push('/');
-          })
-          .catch((err) => {
-            console.log(err.response.data, 'ini eror');
+        time: this.time,
+      };
+      console.log(payload, "ini payload");
+      this.$store
+        .dispatch("axiosPostEvents", payload)
+        .then(({ data }) => {
+          console.log(data, "ini data");
+          this.$store.commit("SET_ADDRESS", "");
+          Swal.fire({
+            icon: "success",
+            title: `Success add ${data.result.name} as new event! `,
+            showConfirmButton: false,
+            timer: 1500,
           });
-    }
+          this.$router.push("/");
+        })
+        .catch((err) => {
+          Swal.fire({
+            icon: "error",
+            title: "All input must be filled!",
+            showConfirmButton: false,
+            timer: 1500,
+          });
+          console.log(err.response.data, "ini eror");
+        });
+    },
   },
 };
 </script>

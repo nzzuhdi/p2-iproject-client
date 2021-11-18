@@ -29,6 +29,7 @@
 </template>
 
 <script>
+import Swal from "sweetalert2";
 export default {
 name: "Navbar",
 methods: {
@@ -45,6 +46,13 @@ methods: {
       if (response) {
         console.log(response);
       }
+       Swal.fire({
+            icon: "warning",
+            title: `Success Logout`,
+            showConfirmButton: false,
+            timer: 1500,
+          });
+
       this.$router.push('/');
     }
   },

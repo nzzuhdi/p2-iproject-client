@@ -23,6 +23,13 @@ export default new Vuex.Store({
     }
   },
   actions: {
+    axiosRegister(context, payload) {
+      return axios({
+        method: "POST",
+        url: `register`,
+        data: payload
+      })
+    },
     axiosLogin(context, payload) {
       return axios({
         method: "POST",
@@ -57,7 +64,7 @@ export default new Vuex.Store({
         data: formData
       })
     },
-    axiosPostEvents(context, payload){
+    axiosPostPlayers(context, payload){
       const EventId = payload
       
       return axios({

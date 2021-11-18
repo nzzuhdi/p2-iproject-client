@@ -11,7 +11,8 @@
       
       </div>
    <div class="row justify-content-lg-center mt-2">
-       <button @click="toAddEvent" type="button" class="btn btn-secondary">Or Create The New One!</button>
+       <button v-if="isLogin" @click="toAddEvent" type="button" class="btn btn-secondary">Or Create The New One!</button>
+        <button v-else  @click="toLogin" class="btn btn-secondary"> Login to create ur sports event</button>
         </div>
     </div>
   </div>
@@ -28,10 +29,15 @@ export default {
   methods: {
      toAddEvent(){
       this.$router.push('/addevent').catch(()=>{});
-    }
+    },
+    toLogin() {
+      this.$router.push('/login')
+}
   },
-  created(){
-    
+  computed:{
+     isLogin(){
+      return this.$store.state.isLogin
+    }
   }
 }
 </script>
