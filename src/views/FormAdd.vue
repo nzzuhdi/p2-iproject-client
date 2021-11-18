@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <h1>Create Your Sports Event Here!</h1>
-    <form>
+    <form @submit.prevent="postEvents">
       <div class="row">
         <div class="col-6">
           <fieldset>
@@ -102,8 +102,9 @@ export default {
       time: "",
       userLocation: {},
       position: {},
-      imgUrl: "",
-      category: ""
+      imageUrl: "",
+      category: "",
+      address: ""
     };
   },
   watch: {
@@ -111,7 +112,11 @@ export default {
   },
   computed: {
     getAddress() {
+      this.address = this.$store.state.addressAdd
       return this.$store.state.addressAdd;
+    },
+    getLatlng() {
+      return this.$store.state.latlng;
     },
   },
   created() {},
@@ -119,9 +124,24 @@ export default {
     uploadFile() {
       console.log(this.imgUrl,'before');
 
-      this.imgUrl = this.$refs.file.files[0];
-      console.log(this.imgUrl,'after');
+      this.imageUrl = this.$refs.file.files[0];
+      console.log(this.imageUrl,'after');
     },
+    postEvents(){
+      // console.log(this.getLatlng, 'latlg');
+      const payload = {
+        name: this.eventName,
+        category: this.category,
+        address: this.getAddress,
+        imageUrl: this.imageUrl,
+        lattitude: this.getLatlng.lat,
+        longitude: this.getLatlng.lng,
+        date: this.date,
+        time: this.time
+      }
+      console.log(payload,'ini payload');
+     this.$store.dispatch("axiosPostEvents", payload) 
+    }
   },
 };
 </script>

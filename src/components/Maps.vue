@@ -4,11 +4,13 @@
     style="height: 500px; width: 800px"
     :zoom="zoom"
     :center="[
-      userLocation.lat || defaultLocation.lat,
-      userLocation.lng || defaultLocation.lng
+      position.lat || userLocation.lat || defaultLocation.lat,
+      position.lng || userLocation.lng || defaultLocation.lng,
     ]"
   >
     <l-tile-layer :url="url" :attribution="attribution"></l-tile-layer>
+    <l-geosearch :options="geoSearchOptions"></l-geosearch>
+  
     <l-marker
       v-for="event in events"
       :key="event.name"
@@ -29,7 +31,8 @@
 
 <script>
 import { LMap, LTileLayer, LMarker, LPopup , LTooltip } from "vue2-leaflet";
-
+import { OpenStreetMapProvider } from "leaflet-geosearch";
+import LGeosearch from "vue2-leaflet-geosearch";
 export default {
   name: "Maps",
   components: {
@@ -38,13 +41,14 @@ export default {
     LMarker,
     LPopup,
     LTooltip,
+    LGeosearch
   },
    props: {
     defaultLocation: {
       type: Object,
       default: () => ({
-        lat: 8.9806,
-        lng: 38.7578
+        lat: -6.175396150166771,
+        lng: 106.82718599999998
       })
     }
   },
@@ -57,10 +61,19 @@ export default {
       zoom: 15,
       center: [],
       markerLatLng: [-6.1717952, 106.7614208],
-      events: [
-       
-      ],
+      events:[],
+       geoSearchOptions: {
+        provider: new OpenStreetMapProvider(),
+        showMarker: false,
+        autoClose: true,
+      },
+      position: {},
+
     };
+  },
+  mounted() {
+    this.getUserPosition();
+    this.$refs.map.mapObject.on("geosearch/showlocation", this.onSearch);
   },
   created() {
       console.log('masuk beforemount');
@@ -90,6 +103,10 @@ export default {
         });
       }
     },
+     onSearch(value) {
+      const loc = value.location;
+      this.position = { lat: loc.y, lng: loc.x };
+    }
   }
 };
 </script>
