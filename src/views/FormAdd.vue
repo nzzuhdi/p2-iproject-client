@@ -141,6 +141,13 @@ export default {
       }
       console.log(payload,'ini payload');
      this.$store.dispatch("axiosPostEvents", payload) 
+     .then(({data} ) => {
+         console.log(data, 'ini data');
+          this.$router.push('/');
+          })
+          .catch((err) => {
+            console.log(err.response.data, 'ini eror');
+          });
     }
   },
 };

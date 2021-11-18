@@ -38,13 +38,23 @@ export default new Vuex.Store({
       })
     },
     axiosPostEvents(context, payload){
-      console.log(context);
+      console.log(payload, 'inidatapay');
+      const formData = new FormData();
+      formData.append("name", payload.name);
+      formData.append("address", payload.address);
+      formData.append("category", payload.category);
+      formData.append("imageUrl", payload.imageUrl);
+      formData.append("lattitude", payload.lattitude);
+      formData.append("longitude", payload.longitude);
+      formData.append("date", payload.date);
+      formData.append("time", payload.time);
       return axios({
-        method: "GET",
+        method: "POST",
         url: `events`,
         headers:{
-
-        }
+          access_token : localStorage.access_token
+        },
+        data: formData
       })
     }
   },
