@@ -18,10 +18,10 @@
     >
       <l-popup style="width:200%; p">
         <div class="col-6">
-        <h2>{{ event.name }}</h2>
-        <img :src="event.imageUrl" alt="" style="max-width:100%">
+        <h2 style="margin-left: 10%">{{ event.name }}</h2>
+        <img :src="event.imageUrl" alt="" style="max-width:80%">
         <p>Alamat: {{ event.address }}</p>
-        <p>Tanggal: {{ event.date }}</p>
+        <p>Tanggal: {{ event.date.split('T')[0] }}</p>
         <p>Waktu: {{ event.time }}</p>
         <button v-if="isLogin" @click="postPlayers(event.id)" class="btn-success">Join</button>
         <button v-else  @click="toLogin" class="btn-primary"> Login for Join</button>

@@ -1,8 +1,7 @@
 <template>
   <div class="home">
     <div class="container-fluid">
-        <h1> Get Ur Body Sweat!</h1>
-        <br>
+        <h1 style="margin-top: 5vh"> Get Ur Body Sweat!</h1>
         <h2> Find Sports Events Near You  & Join them!</h2>
       <div class="row justify-content-lg-center">
         <div class="col-lg-auto">
