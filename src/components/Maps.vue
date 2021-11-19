@@ -23,8 +23,17 @@
         <p>Alamat: {{ event.address }}</p>
         <p>Tanggal: {{ event.date.split('T')[0] }}</p>
         <p>Waktu: {{ event.time }}</p>
+        <div>
+          <div class="row">
+          <div class="col-2">
+        <button  @click="toDetail(event.id)" class="btn-success">Details</button>
+          </div>
+          <div class="col">
         <button v-if="isLogin" @click="postPlayers(event.id)" class="btn-success">Join</button>
         <button v-else  @click="toLogin" class="btn-primary"> Login for Join</button>
+          </div>
+          </div>
+        </div>
 
         </div>
         </l-popup
@@ -122,8 +131,31 @@ export default {
     toLogin() {
       this.$router.push('/login')
 },
+    toDetail(eventId) {
+      console.log(eventId, 'ini dapet eventid')
+      this.$store.dispatch("axiosGetEvent",eventId)
+      .then(({ data }) => {
+        console.log(data);
+        this.$store.commit("SET_DETAIL",data)
+        Swal.fire({
+            icon: "success",
+            title: `View event detail`,
+            showConfirmButton: true,
+          });
+      })
+      .catch((err) => {
+        Swal.fire({
+            icon: "error",
+            title: err.response.data.message,
+            showConfirmButton: false,
+            timer: 1500,
+          });
+        console.log(err, 'masuk eror fetch');
+      });
+
+      this.$router.push('/eventDetail')
+},
     postPlayers(eventId) {
-      console.log(eventId);
       this.$store.dispatch("axiosPostPlayers",eventId)
       .then(({ data }) => {
         Swal.fire({

@@ -9,7 +9,8 @@ export default new Vuex.Store({
   state: {
     isLogin : false,
     addressAdd: '',
-    latlng: []
+    latlng: [],
+    details: {}
   },
   mutations: {
     SET_ISLOGIN(state, payload) {
@@ -20,7 +21,10 @@ export default new Vuex.Store({
     },
     SET_LATLNG(state, payload) {
       state.latlng = payload
-    }
+    },
+    SET_DETAIL(state, payload) {
+      state.details = payload
+    },
   },
   actions: {
     axiosRegister(context, payload) {
@@ -64,15 +68,22 @@ export default new Vuex.Store({
         data: formData
       })
     },
-    axiosPostPlayers(context, payload){
+    axiosGetEvent(context, payload){
       const EventId = payload
-      
+      console.log(payload, 'ini payloaddetail');
+      return axios({
+        method: "GET",
+        url: `events/detail/${EventId}`,
+      })
+    },
+    axiosPostPlayers(context, payload){
+      console.log(payload, 'inidatapay');
       return axios({
         method: "POST",
-        url: `events/players/${EventId}`,
+        url: `events/players/${payload}`,
         headers:{
           access_token : localStorage.access_token
-        }
+        },
       })
     }
   },

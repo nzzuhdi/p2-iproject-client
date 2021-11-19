@@ -77,13 +77,12 @@
                 @change="uploadFile"
               />
             </div>
-
-            <button type="submit" class="btn btn-primary">Submit</button>
+            <button type="submit" class="btn btn-primary mb-3">Submit</button>
           </fieldset>
         </div>
         <div class="col-6">
           <div class="form-group">
-            <MapsAdd />
+            <MapsAdd style="margin-top:15vh"/>
           </div>
         </div>
       </div>

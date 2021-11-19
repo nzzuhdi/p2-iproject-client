@@ -2,7 +2,7 @@
   <section
     id="login"
     class="container row"
-    style="justify-content: center; margin-top: 10vh; margin-left: 10%"
+    style="justify-content: center; margin-top: 10vh; margin-left: 7%"
   >
     <div class="card border-primary md-6 " style="width: 20rem">
       <form>
