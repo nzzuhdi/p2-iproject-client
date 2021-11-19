@@ -2,9 +2,9 @@
   <section
     id="register"
     class="container row 5"
-    style="justify-content: center; margin-top: 15vh; margin-left: 10%"
+    style="justify-content: center; margin-top: 10vh; margin-left: 10%"
   >
-    <div class="card border-primary mb-3" style="max-width: 30rem">
+    <div class="card border-primary mb-3" style="width: 20rem">
       <form>
         <fieldset>
           <legend  style="justify-content: center" >Register Here</legend>
@@ -16,7 +16,8 @@
             <input
             v-model="emailInput"
               type="email"
-              class="form-control"
+              class="form-control ml-4 "
+              style="width:80%"
               id="exampleInputEmail1"
               aria-describedby="emailHelp"
               placeholder="Enter email"
@@ -25,24 +26,41 @@
               >We'll never share your email with anyone else.</small
             >
           </div>
+           <div class="form-group">
+            <label for="exampleInputEmail1" class="form-label mt-1"
+              >Username</label
+            >
+            <input
+            v-model="username"
+              type="username"
+              class="form-control ml-4 "
+              style="width:80%"
+              id="username"
+              aria-describedby="username"
+              placeholder="Enter username"
+            />
+            <small id="emailHelp" class="form-text text-muted"
+              >So people can call you.</small
+            >
+          </div>
           <div class="form-group">
-            <label for="exampleInputPassword1" class="form-label mt-4"
+            <label for="exampleInputPassword1" class="form-label mt-1"
               >Password</label
             >
             <input
               v-model="passwordInput"
               type="password"
-              class="form-control"
+               class="form-control ml-4 "
+              style="width:80%;"
               id="exampleInputPassword1"
               placeholder="Password"
             />
           </div>
-          <br />
           <button
            @click.prevent="getRegister"
             type="submit"
             class="btn btn-primary"
-            style="margin-bottom: 10px"
+            style="margin-bottom: 20px"
           >
             Submit
           </button>
@@ -59,13 +77,15 @@ export default {
     return {
       emailInput: "",
       passwordInput: "",
+      username: ""
     };
   },
   methods:{
     getRegister(){
       const payload = {
         email:this.emailInput,
-        password:this.passwordInput
+        password:this.passwordInput,
+        username: this.username
       }
        this.$store
         .dispatch("axiosRegister", payload)
@@ -76,7 +96,9 @@ export default {
         .catch((err) => {
           console.log(err.response.data);
         });
-      (this.emailInput = ""), (this.passwordInput = "");
+      (this.emailInput = ""), 
+      (this.passwordInput = "");
+      (this.username = "");
 
     }
   }

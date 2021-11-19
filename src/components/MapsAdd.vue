@@ -52,8 +52,8 @@ export default {
     defaultLocation: {
       type: Object,
       default: () => ({
-        lat: 8.9806,
-        lng: 38.7578,
+        lat: -6.175396150166771,
+        lng: 106.82718599999998
       }),
     },
   },
@@ -85,7 +85,6 @@ export default {
       deep: true,
       async handler() {
         this.address = await this.getAddress();
-        // this.$emit("input", { position: value, address: this.address });
       },
     },
   },
@@ -116,15 +115,8 @@ export default {
             lat: pos.coords.latitude,
             lng: pos.coords.longitude,
           };
-          console.log(this.userLocation.lat);
-          console.log(this.userLocation.lng);
-          console.log(this.center, "tes");
-
           this.center = [this.userLocation.lat, this.userLocation.lng];
           this.events[0].markerLatLng = this.center;
-
-          console.log(this.userLocation);
-          console.log(this.center, "tes 1");
         });
       }
     },
@@ -152,7 +144,8 @@ export default {
       // place the marker on the clicked spot
       console.log(value);
       this.position = value.latlng;
-      console.log(this.position, "mapclick");
+      this.$store.commit("SET_LATLNG", this.position)
+      console.log(this.position.lat, "mapclick");
     },
     onSearch(value) {
       const loc = value.location;

@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <h1>Create Your Sports Event Here!</h1>
-    <form>
+    <form @submit.prevent="postEvents">
       <div class="row">
         <div class="col-6">
           <fieldset>
@@ -68,19 +68,21 @@
               <label for="formFile" class="form-label mt-4"
                 >Your Logo's Event</label
               >
-              <input id="news-image"
-              type="file"
-              class="form-control"
-              name="imgUrl"
-              ref="file" @change="uploadFile"/>
+              <input
+                id="news-image"
+                type="file"
+                class="form-control"
+                name="imgUrl"
+                ref="file"
+                @change="uploadFile"
+              />
             </div>
-
-            <button type="submit" class="btn btn-primary">Submit</button>
+            <button type="submit" class="btn btn-primary mb-3">Submit</button>
           </fieldset>
         </div>
         <div class="col-6">
           <div class="form-group">
-            <MapsAdd />
+            <MapsAdd style="margin-top:15vh"/>
           </div>
         </div>
       </div>
@@ -90,6 +92,8 @@
 
 <script>
 import MapsAdd from "../components/MapsAdd.vue";
+import Swal from "sweetalert2";
+
 export default {
   name: "FormAdd",
   components: {
@@ -102,25 +106,64 @@ export default {
       time: "",
       userLocation: {},
       position: {},
-      imgUrl: "",
-      category: ""
+      imageUrl: "",
+      category: "",
+      address: "",
     };
   },
-  watch: {
-
-  },
+  watch: {},
   computed: {
     getAddress() {
+      this.address = this.$store.state.addressAdd;
       return this.$store.state.addressAdd;
+    },
+    getLatlng() {
+      return this.$store.state.latlng;
     },
   },
   created() {},
   methods: {
     uploadFile() {
-      console.log(this.imgUrl,'before');
+      console.log(this.imgUrl, "before");
 
-      this.imgUrl = this.$refs.file.files[0];
-      console.log(this.imgUrl,'after');
+      this.imageUrl = this.$refs.file.files[0];
+      console.log(this.imageUrl, "after");
+    },
+    postEvents() {
+      // console.log(this.getLatlng, 'latlg');
+      const payload = {
+        name: this.eventName,
+        category: this.category,
+        address: this.getAddress,
+        imageUrl: this.imageUrl,
+        lattitude: this.getLatlng.lat,
+        longitude: this.getLatlng.lng,
+        date: this.date,
+        time: this.time,
+      };
+      console.log(payload, "ini payload");
+      this.$store
+        .dispatch("axiosPostEvents", payload)
+        .then(({ data }) => {
+          console.log(data, "ini data");
+          this.$store.commit("SET_ADDRESS", "");
+          Swal.fire({
+            icon: "success",
+            title: `Success add ${data.result.name} as new event! `,
+            showConfirmButton: false,
+            timer: 1500,
+          });
+          this.$router.push("/");
+        })
+        .catch((err) => {
+          Swal.fire({
+            icon: "error",
+            title: "All input must be filled!",
+            showConfirmButton: false,
+            timer: 1500,
+          });
+          console.log(err.response.data, "ini eror");
+        });
     },
   },
 };
