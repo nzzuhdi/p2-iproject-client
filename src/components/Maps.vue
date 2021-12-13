@@ -131,9 +131,9 @@ export default {
     toLogin() {
       this.$router.push('/login')
 },
-    toDetail(eventId) {
+  async  toDetail(eventId) {
       console.log(eventId, 'ini dapet eventid')
-      this.$store.dispatch("axiosGetEvent",eventId)
+      await this.$store.dispatch("axiosGetEvent",eventId)
       .then(({ data }) => {
         console.log(data);
         this.$store.commit("SET_DETAIL",data)
